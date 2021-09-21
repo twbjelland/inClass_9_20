@@ -1,20 +1,20 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "os"
-    "unicode"
-    "regexp"
+	"fmt"
+	"log"
+	"os"
+	"regexp"
+	"unicode"
 )
 
 var charClass int
-var next_char rune
-var lexeme string
+var nextChar string
+var lexeme [100]string
 var lexLen int
 var token int
 var nextToken int
-var in_fp
+var in_fp os.File
 
 var isAlpha = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 
@@ -32,7 +32,6 @@ const DIV_OP = 24
 const LEFT_PAREN = 25
 const RIGHT_PAREN = 26
 
-
 //define grammar
 
 //int literal
@@ -46,44 +45,54 @@ const RIGHT_PAREN = 26
 //right_paren
 
 func addChar() {
-    lexeme[lexLen++] = nextChar
-    lexeme[lexLen] = 0
+	lexeme[lexLen+1] = nextChar
+	lexeme[lexLen] = "0"
 }
 
-func getChar(){
-    if((nextChar = getc(in_fp)) = EOF) {
-        if (isAlpha(nextChar))
-            charClass = LETTER
-        else if (unicode.isDigit(nextChar))
-            charClass = DIGIT
-            else charClass = UKNOWN;
-    }
-    else
-        charClass = EOF;
+func getc(f *os.File) (byte, error) {
+	b := make([]byte, 1)
+	_, err := f.Read(b)
+	return b[0], err
 }
 
-func getNonBlank(){
-    if unicode.IsSpace(next_char){
-        getChar()
-    }
+func getChar() {
+	nextChar = getc(*in_fp)
+	if nextChar != "a" {
+		if isAlpha(nextChar) {
+			charClass = LETTER
+		} else if unicode.isDigit(nextChar) {
+			charClass = DIGIT
+		} else {
+			charClass = UKNOWN
+		}
+
+	} else {
+		charClass = EOF
+	}
+}
+
+func getNonBlank() {
+	if unicode.IsSpace(next_char) {
+		getChar()
+	}
 
 }
 
 func main() {
-    
-    //read in file
-    content, err := os.ReadFile("file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println(string(content))
-    
-    //iterate over all characters
-    
-        //find lexemes
-    
-        //convert to tokens
-    
-        //enforce rules
-    
+
+	//read in file
+	content, err := os.ReadFile("file.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(content))
+
+	//iterate over all characters
+
+	//find lexemes
+
+	//convert to tokens
+
+	//enforce rules
+
 }
