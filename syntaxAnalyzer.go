@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
-	"regexp"
-	"unicode"
 )
 
+/*
 var charClass int
 var nextChar string
 var lexeme [100]string
@@ -20,8 +17,9 @@ var isAlpha = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 
 const LETTER = 0
 const DIGIT = 1
-const UNKNOWN = 99
+const UNKNOWN = 99 */
 
+/*
 const INT_LIT = 10
 const IDENT = 11
 const ASSIGN_OP = 20
@@ -31,6 +29,7 @@ const MULT_OP = 23
 const DIV_OP = 24
 const LEFT_PAREN = 25
 const RIGHT_PAREN = 26
+*/
 
 //define grammar
 
@@ -44,10 +43,11 @@ const RIGHT_PAREN = 26
 //left_paren
 //right_paren
 
+/*
 func addChar() {
 	lexeme[lexLen+1] = nextChar
 	lexeme[lexLen] = "0"
-}
+}*/
 
 func getc(f *os.File) (byte, error) {
 	b := make([]byte, 1)
@@ -55,6 +55,7 @@ func getc(f *os.File) (byte, error) {
 	return b[0], err
 }
 
+/*
 func getChar() {
 	nextChar = getc(*in_fp)
 	if nextChar != "a" {
@@ -69,15 +70,17 @@ func getChar() {
 	} else {
 		charClass = EOF
 	}
-}
+}*/
 
+/*
 func getNonBlank() {
 	if unicode.IsSpace(next_char) {
 		getChar()
 	}
 
-}
+}*/
 
+/*
 func main() {
 
 	//read in file
@@ -96,3 +99,4 @@ func main() {
 	//enforce rules
 
 }
+*/
