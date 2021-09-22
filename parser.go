@@ -33,6 +33,7 @@ var isAlpha = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 const LETTER = 0
 const DIGIT = 1
 const UNKNOWN = 99
+const EOF = 98
 
 func lookup(ch rune) int {
 	switch ch {
@@ -62,7 +63,7 @@ func lookup(ch rune) int {
 		break
 	default:
 		addChar()
-		nextToken = 0
+		nextToken = 0 //change to eof
 		break
 	}
 	return nextToken
@@ -73,14 +74,55 @@ func addChar() {
 	lexeme[lexLen] = 0
 }
 
-func getChar() {
+func getChar(ch rune) {
 	//to do : implement getChar
+	nextChar = ch
 }
 
-func getNonBlank() {
+func getNonBlank(ch rune) {
 	for unicode.IsSpace(nextChar) {
-		getChar()
+		getChar(ch)
 	}
+}
+
+func lex(ch rune) int {
+	lexLen = 0
+	getNonBlank(ch)
+	switch charClass {
+	case LETTER:
+		addChar()
+		getChar(ch) //what should I pass in here?
+		for charClass == LETTER || charClass == DIGIT {
+			addChar()
+			getChar(ch) //what should I pass in here?
+		}
+		nextToken = IDENT
+		break
+	case DIGIT:
+		addChar()
+		getChar(ch) //what should I pass in here?
+		for charClass == DIGIT {
+			addChar()
+			getChar(ch) //what should I pass in here?
+		}
+		nextToken = INT_LIT
+		break
+	case UNKNOWN:
+		lookup(nextChar)
+		getChar(ch) //what should I pass in here?
+		break
+	case EOF:
+		nextToken = EOF
+		lexeme[0] = 'E'
+		lexeme[1] = 'O'
+		lexeme[2] = 'F'
+		lexeme[3] = 0
+		break
+	}
+
+	fmt.Println("Next token is: ")
+	fmt.Println("%v", nextToken)
+	return nextToken
 }
 
 func main() {
@@ -94,7 +136,6 @@ func main() {
 	inputdata := string(filebuffer)
 	in_fp = bufio.NewScanner(strings.NewReader(inputdata))
 	in_fp.Split(bufio.ScanRunes)
-	getChar()
 
 	for in_fp.Scan() {
 		lex(in_fp.Text())
