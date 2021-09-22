@@ -79,18 +79,19 @@ func getChar() {
 	//to do : implement getChar
 	in_fp.Scan()
 	nextString := in_fp.Text()
-	nextChar = []rune(nextString)[0]
-
-	if (65 <= nextChar && nextChar <= 90) || (97 <= nextChar && nextChar <= 122) {
-		fmt.Print("isAlpha")
-		charClass = LETTER
-	} else if unicode.IsDigit(nextChar) {
-		fmt.Print("isDigit")
-		charClass = DIGIT
+	if len(nextString) > 0 {
+		nextChar = []rune(nextString)[0]
+		if (65 <= nextChar && nextChar <= 90) || (97 <= nextChar && nextChar <= 122) {
+			charClass = LETTER
+		} else if unicode.IsDigit(nextChar) {
+			charClass = DIGIT
+		} else {
+			charClass = UNKNOWN
+		}
 	} else {
-		fmt.Print("unknown")
-		charClass = UNKNOWN
+		charClass = EOF
 	}
+
 }
 
 func getNonBlank() {
@@ -105,10 +106,10 @@ func lex() int {
 	switch charClass {
 	case LETTER:
 		addChar()
-		getChar() //what should I pass in here?
+		getChar()
 		for charClass == LETTER || charClass == DIGIT {
 			addChar()
-			getChar() //what should I pass in here?
+			getChar()
 		}
 		nextToken = IDENT
 		break
@@ -126,6 +127,7 @@ func lex() int {
 		getChar() //what should I pass in here?
 		break
 	case EOF:
+		fmt.Print("EOF")
 		nextToken = EOF
 		lexeme[0] = 'E'
 		lexeme[1] = 'O'
@@ -134,9 +136,12 @@ func lex() int {
 		break
 	}
 	fmt.Print("Next token is: ")
-	fmt.Println("%v", nextToken)
-	fmt.Print("Next lexeme is: ")
-	fmt.Println("%s", lexeme)
+	fmt.Print(nextToken)
+	fmt.Print(", Next lexeme is: ")
+	for i := 0; i < lexLen; i++ {
+		fmt.Print(string(lexeme[i]))
+	}
+	fmt.Println()
 	return nextToken
 }
 
