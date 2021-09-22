@@ -94,54 +94,52 @@ func getChar() {
 }
 
 func getNonBlank() {
-	for unicode.IsSpace(nextChar) {
-		if charClass != EOF {
-			getChar()
-		} else {
-			lex()
-		}
+	for unicode.IsSpace(nextChar) && charClass != EOF {
+		getChar()
 	}
 }
 
 func lex() int {
 	lexLen = 0
-	if charClass == EOF {
-		fmt.Println("Next token is 98, Next lexeme is EOF")
+	getNonBlank()
+	switch charClass {
+	case LETTER:
+		addChar()
+		getChar()
+		for charClass == LETTER || charClass == DIGIT {
+			addChar()
+			getChar()
+		}
+		nextToken = IDENT
+		break
+	case DIGIT:
+		addChar()
+		getChar()
+		for charClass == DIGIT {
+			addChar()
+			getChar()
+		}
+		nextToken = INT_LIT
+		break
+	case UNKNOWN:
+		lookup(nextChar)
+		getChar()
+		break
+	case EOF:
 		nextToken = EOF
-	} else {
-		switch charClass {
-		case LETTER:
-			addChar()
-			getChar()
-			for charClass == LETTER || charClass == DIGIT {
-				addChar()
-				getChar()
-			}
-			nextToken = IDENT
-			break
-		case DIGIT:
-			addChar()
-			getChar()
-			for charClass == DIGIT {
-				addChar()
-				getChar()
-			}
-			nextToken = INT_LIT
-			break
-		case UNKNOWN:
-			lookup(nextChar)
-			getChar()
-			break
-		}
-		fmt.Print("Next token is: ")
-		fmt.Print(nextToken)
-		fmt.Print(", Next lexeme is: ")
-		for i := 0; i < lexLen; i++ {
-			fmt.Print(string(lexeme[i]))
-		}
-		fmt.Println()
-
+		lexLen = 3
+		lexeme[0] = 'E'
+		lexeme[1] = 'O'
+		lexeme[2] = 'F'
 	}
+	fmt.Print("Next token is: ")
+	fmt.Print(nextToken)
+	fmt.Print(", Next lexeme is: ")
+	for i := 0; i < lexLen; i++ {
+		fmt.Print(string(lexeme[i]))
+	}
+	fmt.Println()
+
 	return nextToken
 }
 
