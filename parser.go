@@ -63,53 +63,67 @@ func lookup(ch rune) int {
 		break
 	default:
 		addChar()
-		nextToken = 0 //change to eof
+		nextToken = EOF //change to eof
 		break
 	}
 	return nextToken
 }
 
 func addChar() {
-	lexeme[lexLen+1] = nextChar
+	lexeme[lexLen] = nextChar
+	lexLen++
 	lexeme[lexLen] = 0
 }
 
-func getChar(ch rune) {
+func getChar() {
 	//to do : implement getChar
-	nextChar = ch
-}
+	in_fp.Scan()
+	nextString := in_fp.Text()
+	nextChar = []rune(nextString)[0]
 
-func getNonBlank(ch rune) {
-	for unicode.IsSpace(nextChar) {
-		getChar(ch)
+	if (65 <= nextChar && nextChar <= 90) || (97 <= nextChar && nextChar <= 122) {
+		fmt.Print("isAlpha")
+		charClass = LETTER
+	} else if unicode.IsDigit(nextChar) {
+		fmt.Print("isDigit")
+		charClass = DIGIT
+	} else {
+		fmt.Print("unknown")
+		charClass = UNKNOWN
 	}
 }
 
-func lex(ch rune) int {
+func getNonBlank() {
+	for unicode.IsSpace(nextChar) {
+		getChar()
+	}
+}
+
+func lex() int {
 	lexLen = 0
-	getNonBlank(ch)
+	getNonBlank()
 	switch charClass {
 	case LETTER:
 		addChar()
-		getChar(ch) //what should I pass in here?
+		getChar() //what should I pass in here?
 		for charClass == LETTER || charClass == DIGIT {
 			addChar()
-			getChar(ch) //what should I pass in here?
+			getChar() //what should I pass in here?
 		}
 		nextToken = IDENT
 		break
 	case DIGIT:
 		addChar()
-		getChar(ch) //what should I pass in here?
+		getChar() //what should I pass in here?
 		for charClass == DIGIT {
 			addChar()
-			getChar(ch) //what should I pass in here?
+			getChar() //what should I pass in here?
 		}
 		nextToken = INT_LIT
 		break
 	case UNKNOWN:
 		lookup(nextChar)
-		getChar(ch) //what should I pass in here?
+		getChar() //what should I pass in here?
 		break
 	case EOF:
 		nextToken = EOF
@@ -119,9 +133,10 @@ func lex(ch rune) int {
 		lexeme[3] = 0
 		break
 	}
-
-	fmt.Println("Next token is: ")
+	fmt.Print("Next token is: ")
 	fmt.Println("%v", nextToken)
+	fmt.Print("Next lexeme is: ")
+	fmt.Println("%s", lexeme)
 	return nextToken
 }
 
@@ -137,8 +152,8 @@ func main() {
 	in_fp = bufio.NewScanner(strings.NewReader(inputdata))
 	in_fp.Split(bufio.ScanRunes)
 
-	for in_fp.Scan() {
-		lex(in_fp.Text())
+	for nextToken != EOF {
+		lex()
 	}
 }
 
