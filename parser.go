@@ -63,7 +63,7 @@ func lookup(ch rune) int {
 		break
 	default:
 		addChar()
-		nextToken = EOF //change to eof
+		nextToken = EOF
 		break
 	}
 	return nextToken
@@ -76,7 +76,6 @@ func addChar() {
 }
 
 func getChar() {
-	//to do : implement getChar
 	in_fp.Scan()
 	nextString := in_fp.Text()
 	if len(nextString) > 0 {
@@ -96,52 +95,53 @@ func getChar() {
 
 func getNonBlank() {
 	for unicode.IsSpace(nextChar) {
-		getChar()
+		if charClass != EOF {
+			getChar()
+		} else {
+			lex()
+		}
 	}
 }
 
 func lex() int {
 	lexLen = 0
-	getNonBlank()
-	switch charClass {
-	case LETTER:
-		addChar()
-		getChar()
-		for charClass == LETTER || charClass == DIGIT {
+	if charClass == EOF {
+		fmt.Println("Next token is 98, Next lexeme is EOF")
+		nextToken = EOF
+	} else {
+		switch charClass {
+		case LETTER:
 			addChar()
 			getChar()
-		}
-		nextToken = IDENT
-		break
-	case DIGIT:
-		addChar()
-		getChar() //what should I pass in here?
-		for charClass == DIGIT {
+			for charClass == LETTER || charClass == DIGIT {
+				addChar()
+				getChar()
+			}
+			nextToken = IDENT
+			break
+		case DIGIT:
 			addChar()
-			getChar() //what should I pass in here?
+			getChar()
+			for charClass == DIGIT {
+				addChar()
+				getChar()
+			}
+			nextToken = INT_LIT
+			break
+		case UNKNOWN:
+			lookup(nextChar)
+			getChar()
+			break
 		}
-		nextToken = INT_LIT
-		break
-	case UNKNOWN:
-		lookup(nextChar)
-		getChar() //what should I pass in here?
-		break
-	case EOF:
-		fmt.Print("EOF")
-		nextToken = EOF
-		lexeme[0] = 'E'
-		lexeme[1] = 'O'
-		lexeme[2] = 'F'
-		lexeme[3] = 0
-		break
+		fmt.Print("Next token is: ")
+		fmt.Print(nextToken)
+		fmt.Print(", Next lexeme is: ")
+		for i := 0; i < lexLen; i++ {
+			fmt.Print(string(lexeme[i]))
+		}
+		fmt.Println()
+
 	}
-	fmt.Print("Next token is: ")
-	fmt.Print(nextToken)
-	fmt.Print(", Next lexeme is: ")
-	for i := 0; i < lexLen; i++ {
-		fmt.Print(string(lexeme[i]))
-	}
-	fmt.Println()
 	return nextToken
 }
 
@@ -157,9 +157,8 @@ func main() {
 	in_fp = bufio.NewScanner(strings.NewReader(inputdata))
 	in_fp.Split(bufio.ScanRunes)
 
-	for nextToken != EOF {
+	for charClass != EOF {
 		lex()
 	}
-}
 
-//implement lex function and figure out how to pass char throughout
+}
