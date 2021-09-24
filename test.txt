@@ -1,4 +1,1 @@
-hello
-yo
-woo
-(a + b) = c
+(sum + 47) / total

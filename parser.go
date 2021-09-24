@@ -81,7 +81,7 @@ func getChar() {
 	nextString := in_fp.Text()
 	if len(nextString) > 0 {
 		nextChar = []rune(nextString)[0]
-		if (65 <= nextChar && nextChar <= 90) || (97 <= nextChar && nextChar <= 122) {
+		if unicode.IsLetter(nextChar) /* (65 <= nextChar && nextChar <= 90) || (97 <= nextChar && nextChar <= 122)*/ {
 			charClass = LETTER
 		} else if unicode.IsDigit(nextChar) {
 			charClass = DIGIT
@@ -132,12 +132,14 @@ func lex() int {
 		lexeme[0] = 'E'
 		lexeme[1] = 'O'
 		lexeme[2] = 'F'
+		lexeme[3] = 0
+		break
 	}
-	fmt.Print("Next token is: ")
+	fmt.Printf("Next token is: ")
 	fmt.Print(nextToken)
-	fmt.Print(", Next lexeme is: ")
+	fmt.Printf(", Next lexeme is: ")
 	for i := 0; i < lexLen; i++ {
-		fmt.Print(string(lexeme[i]))
+		fmt.Printf(string(lexeme[i]))
 	}
 	fmt.Println()
 
@@ -219,6 +221,7 @@ func main() {
 	in_fp.Split(bufio.ScanRunes)
 
 	for charClass != EOF {
+		getChar()
 		lex()
 		expr()
 	}
