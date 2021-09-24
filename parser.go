@@ -11,6 +11,7 @@ import (
 	"unicode"
 )
 
+//assign each operator a token
 const INT_LIT = 10
 const IDENT = 11
 const ASSIGN_OP = 20
@@ -36,6 +37,7 @@ const DIGIT = 1
 const UNKNOWN = 99
 const EOF = 98
 
+//function to lookup operators and return the token that they were assigned
 func lookup(ch rune) int {
 	switch ch {
 	case '(':
@@ -70,12 +72,14 @@ func lookup(ch rune) int {
 	return nextToken
 }
 
+//a function to add Char to the lexeme
 func addChar() {
 	lexeme[lexLen] = nextChar
 	lexLen++
 	lexeme[lexLen] = 0
 }
 
+//function to get next character of input and determine its character class
 func getChar() {
 	in_fp.Scan()
 	nextString := in_fp.Text()
@@ -94,12 +98,14 @@ func getChar() {
 
 }
 
+//function to call getChar until it returns a non-whitespace character
 func getNonBlank() {
 	for unicode.IsSpace(nextChar) && charClass != EOF {
 		getChar()
 	}
 }
 
+//a lexical analyzer for arithmetic expressions
 func lex() int {
 	lexLen = 0
 	getNonBlank()
@@ -208,6 +214,10 @@ func factor() {
 	fmt.Printf("Exit <factor>\n")
 }
 
+func parse() {
+	expr()
+}
+
 func main() {
 	filename := "test.txt"
 
@@ -223,7 +233,6 @@ func main() {
 	for charClass != EOF {
 		getChar()
 		lex()
-		expr()
+		parse()
 	}
-
 }
