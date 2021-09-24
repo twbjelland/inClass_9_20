@@ -199,6 +199,8 @@ func factor() {
 			} else {
 				errors.New("oops")
 			}
+		} else {
+			errors.New("oops")
 		}
 	}
 	fmt.Printf("Exit <factor>\n")
@@ -218,6 +220,7 @@ func main() {
 
 	for charClass != EOF {
 		lex()
+		expr()
 	}
 
 }
